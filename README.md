@@ -11,4 +11,4 @@ This builds from [jrnold/rstan](https://hub.docker.com/r/jrnold/rstan/dockerfile
 
 # Docker containers
 
- * [reserving](https://registry.hub.docker.com/u/mages/reserving/)
+ * [verse_reserving](https://cloud.docker.com/repository/docker/mages/verse_reserving)
