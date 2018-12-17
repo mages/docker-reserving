@@ -10,6 +10,6 @@ RUN Rscript -e "remove.packages('rstan')"
 # Update R packages
 RUN Rscript -e "update.packages(lib.loc='/usr/local/lib/R/site-library', repos='https://cloud.r-project.org', ask=FALSE)"
 # Install additional R packages
-RUN install2.r --error --deps TRUE rstan brms bayesplot ChainLadder \
+RUN install2.r --error --deps TRUE rstan brms bayesplot ChainLadder raw \
     data.table nlme lme4 deSolve latticeExtra \
     && rm -rf /tmp/downloaded_packages/ /tmp/*.rds  
