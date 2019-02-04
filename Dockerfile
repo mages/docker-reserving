@@ -2,6 +2,7 @@
 FROM jrnold/rstan
 MAINTAINER Markus Gesmann  <markus.gesmann@gmail.com>
 RUN apt-get update && apt-get dist-upgrade -y
+RUN apt-get install jags
 # Set compiler flag
 RUN echo "CXX14FLAGS=-O3 -march=native -mtune=native" >> $HOME/.R/Makevars
 RUN echo "CXX14FLAGS += -fPIC" >> $HOME/.R/Makevars
