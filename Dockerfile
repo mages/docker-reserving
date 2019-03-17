@@ -13,5 +13,5 @@ RUN Rscript -e "update.packages(lib.loc='/usr/local/lib/R/site-library', repos='
 # Install additional R packages
 RUN install2.r --error --deps TRUE rstan brms bayesplot ChainLadder raw \
     data.table nlme lme4 deSolve latticeExtra \
-    cowplot modelr tidybayes \
+    cowplot modelr tidybayes MLmetrics \
     && rm -rf /tmp/downloaded_packages/ /tmp/*.rds  
