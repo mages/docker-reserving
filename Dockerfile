@@ -1,76 +1,121 @@
+# Docker file with rstan and brms
 FROM rocker/verse:latest
-MAINTAINER Markus Gesmann markus.gesmann@gmail.com
+MAINTAINER Markus Gesmann  <markus.gesmann@gmail.com>
 
-## Mostly copied from Jeffrey Arnold and Jon Zelner
+# Install some dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        autoconf \
+        automake \
+        cmake \
+        libtool \
+        pkg-config \
+        sudo \
+        bzip2 \
+        ca-certificates \
+        curl \
+        gfortran \
+        git \
+        locales \
+        unzip \
+        wget \
+        zip \
+        ssh \
+        bzip2 \
+        ca-certificates \
+        curl \
+        groff \
+        fuse \
+        mime-support \
+        libcurl4-gnutls-dev \
+        libfuse-dev \
+        libssl-dev \
+        libgl1-mesa-glx \
+        libxml2-dev \
+        apt-utils \
+        ed \
+        libnlopt-dev \
+        ccache \
+        libglu1-mesa-dev \
+        python3 \
+        libopenblas-dev \
+        && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/
 
-# Install clang to use as compiler
-# clang seems to be more memory efficient with the templates than g++
-# with g++ rstan cannot compile on docker hub due to memory issues
+# Default to python 3.6
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.5 2 && \
+    update-alternatives --install /usr/bin/python python /usr/bin/python2.7 1
 
-RUN apt-get update && apt-get install -y --no-install-recommends apt-utils
+# Install pip
+RUN curl -SsL -O https://bootstrap.pypa.io/get-pip.py && \
+    python get-pip.py && \
+    rm -f get-pip.py
 
-RUN apt-get update && apt-get install -y apt-transport-https
+RUN pip3 --no-cache-dir install s3cmd awscli boto3
 
-RUN apt-get install -y --no-install-recommends clang-3.6
-
-RUN ln -s /usr/bin/clang++-3.6 /usr/bin/clang++ \
-    && ln -s /usr/bin/clang-3.6 /usr/bin/clang
-
- 
-RUN apt-get update -qq && apt-get -y --no-install-recommends install \
-pngquant \
-libxml2-dev \
-libxt-dev \
-libjpeg-dev \
-cargo \
-libglu1-mesa-dev \
-libcairo2-dev \
-libsqlite3-dev \
-libmariadbd-dev \
-libmariadb-client-lgpl-dev \
-libpq-dev \
-libssh2-1-dev \
-# Global site-wide config
+# Make ~/.R
 RUN mkdir -p $HOME/.R/ \
-    && echo "\nCXX=clang++ -ftemplate-depth-256\n" >> $HOME/.R/Makevars \
+    && echo "\nCXX14FLAGS += -fPIC\n" >> $HOME/.R/Makevars \
     && echo "CC=clang\n" >> $HOME/.R/Makevars
 
-# Install rstan
-RUN install2.r --error \
-    inline \
-    RcppEigen \
-    StanHeaders \
+
+ENV CCACHE_BASEDIR /tmp/
+
+# Install packages
+RUN install2.r --error --deps TRUE \
+    pryr \
     rstan \
-    KernSmooth \
-    knitr \
-    tidyverse \
-    DT \
-    ChainLadder \
-    data.table \
-    latticeExtra \
-    brms \
-    tiybayes \
-    modelr \
-    raw \
-    ggplot2 \
-    deSolve \
+    loo \
     bayesplot \
-    expint \
-    inline \   
-    devtools \
+    rstanarm \
     rstantools \
-    stringr \
+    shinystan \
+    ggmcmc \
+    brms \
+    boot \
+    doMC \
+    glmnet \
+    mcglm \
+    mice \
+    AID \
+    data.table \
+    fasttime \
+    anytime \
+    purrr \
+    DMwR \
+    caret \
+    pROC  \
+    PRROC \
+    bsts \
+    CausalImpact \
+    survival \
+    flexsurv \
+    survAUC \
+    statmod \
+    tweedie \
+    cplm \
+    tictoc \
+    ChainLadder \
+    raw \
     nlme \ 
     lme4 \
-    cowplot 
+    deSolve \
+    latticeExtra \
+    cowplot \
+    modelr \
+    tidybayes \
+    tinytex \
+    && \
+    rm -rf /tmp/downloaded_packages/ /tmp/*.rds
 
-# Config for rstudio user
-RUN mkdir -p /home/rstudio/.R/ \
-    && echo "\nCXX=clang++ -ftemplate-depth-256\n" >> /home/rstudio/.R/Makevars \
-    && echo "CC=clang\n" >> /home/rstudio/.R/Makevars \
-    && echo "CXXFLAGS=-O3\n" >> /home/rstudio/.R/Makevars \
-    && echo "\nrstan::rstan_options(auto_write = TRUE)" >> /home/rstudio/.Rprofile \
-    && echo "options(mc.cores = parallel::detectCores())" >> /home/rstudio/.Rprofile
+RUN install2.r --error --deps TRUE \
+    -r 'https://inla.r-inla-download.org/R/stable' \
+    INLA \
+    && \
+    rm -rf /tmp/downloaded_packages/ /tmp/*.rds
+
 
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends \
@@ -81,4 +126,3 @@ RUN apt-get update \
                    texlive-xetex \
                    texlive-fonts-extra
 
-USER rstudio
