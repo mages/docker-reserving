@@ -57,8 +57,7 @@ RUN pip3 --no-cache-dir install s3cmd awscli boto3
 
 # Make ~/.R
 RUN mkdir -p $HOME/.R/ \
-    && echo "\nCXX14FLAGS += -fPIC\n" >> $HOME/.R/Makevars \
-    && echo "CC=clang\n" >> $HOME/.R/Makevars
+    && echo "\nCXX14FLAGS += -fPIC\n" >> $HOME/.R/Makevars 
 
 
 ENV CCACHE_BASEDIR /tmp/
