@@ -41,7 +41,11 @@ RUN apt-get update && \
         libglu1-mesa-dev \
         python3 \
         libopenblas-dev \
-        cargo
+        cargo \
+        gdal-bin \
+        proj-bin \
+        libgdal-dev \
+        libproj-dev 
 
 ENV PATH=$PATH:/opt/TinyTeX/bin/x86_64-linux/
 
