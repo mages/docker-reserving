@@ -1,10 +1,11 @@
 FROM rocker/tidyverse:latest
 MAINTAINER Markus Gesmann markus.gesmann@gmail.com
 
+echo 'deb http://http.us.debian.org/debian/ testing non-free contrib main' >> /etc/apt/sources.list
 # Install ed, since nloptr needs it to compile
 # Install clang and ccache to speed up Stan installation
 # Install libxt-dev for Cairo 
-RUN apt-get update \
+apt-get update \
     && apt-get install -y --no-install-recommends \
        apt-utils \
        ed \
@@ -14,6 +15,7 @@ RUN apt-get update \
        libxt-dev \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/
+
 
 # Set up environment
 # Use correct Stan Makevars: https://github.com/stan-dev/rstan/wiki/Installing-RStan-on-Mac-or-Linux#prerequisite--c-toolchain-and-configuration
@@ -47,34 +49,22 @@ RUN mkdir -p $HOME/.R \
     && echo "rstan::rstan_options(auto_write = TRUE)\n" >> /home/rstudio/.Rprofile \
     && echo "options(mc.cores = parallel::detectCores())\n" >> /home/rstudio/.Rprofile
 
+
+RUN apt-get install r-cran-rstan
+
 # Install rstan and other packages
 RUN install2.r --error --deps TRUE \
     pryr \
-    rstan \
     loo \
     bayesplot \
-    StanHeaders \
-    BH \
-    Rcpp \
-    REigen \
-    rstantools \
     ggmcmc \
     brms \
-    boot \
     doMC \
     glmnet \
     mcglm \
     mice \
     AID \
     data.table \
-    fasttime \
-    anytime \
-    purrr \
-    DMwR \
-    caret \
-    pROC  \
-    PRROC \
-    bsts \
     CausalImpact \
     survival \
     flexsurv \
@@ -85,16 +75,14 @@ RUN install2.r --error --deps TRUE \
     tictoc \
     ChainLadder \
     raw \
-    nlme \ 
+    nlme \
     lme4 \
     deSolve \
     latticeExtra \
     cowplot \
     modelr \
     tidybayes \
-    knitr \
     bookdown \
-    rmarkdown \
     tinytex 
 
 RUN apt-get update \ 
@@ -105,5 +93,3 @@ RUN apt-get update \
  	&& apt-get install -t unstable -y --no-install-recommends \
                    texlive-xetex \
                    texlive-fonts-extra
-
-USER rstudio
