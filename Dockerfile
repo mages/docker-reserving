@@ -1,4 +1,4 @@
-FROM rocker/hadleyverse:latest
+FROM rocker/tidyverse:latest
 MAINTAINER Markus Gesmann markus.gesmann@gmail.com
 
 ## Mostly pirated from Jon Zelner and jrnold/docker-stan
