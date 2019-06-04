@@ -5,6 +5,9 @@ MAINTAINER "Markus Gesmann" markus.gesmann@gmail.com
 RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:ubuntugis/ubuntugis-unstable
 
+RUN add-apt-repository -y "ppa:marutter/rrutter"
+RUN add-apt-repository -y "ppa:marutter/c2d4u"
+
 RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/  " >> /etc/apt/sources.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
 
