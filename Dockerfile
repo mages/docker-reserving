@@ -1,28 +1,54 @@
-# Docker file with rstan and brms
-FROM jrnold/rstan
-MAINTAINER Markus Gesmann  <markus.gesmann@gmail.com>
-RUN apt-get update && apt-get dist-upgrade -y
-RUN apt-get install jags
-# Set compiler flag
-RUN echo "CXX14FLAGS=-O3 -march=native -mtune=native" >> $HOME/.R/Makevars
-RUN echo "CXX14FLAGS += -fPIC" >> $HOME/.R/Makevars
-# Remove old rstan installation 2.18.1
-RUN Rscript -e "remove.packages('rstan')"
-# Update R packages
-RUN Rscript -e "update.packages(lib.loc='/usr/local/lib/R/site-library', repos='https://cloud.r-project.org', ask=FALSE)"
-# Install additional R packages
-RUN install2.r --error --deps TRUE rstan brms bayesplot ChainLadder raw \
-    data.table nlme lme4 deSolve latticeExtra \
-    cowplot modelr tidybayes \
-    loo bayesplot ggmcmc doMC \
-    glmnet mcglm bookdown tinytex 
+FROM ubuntu:16.04
 
-RUN echo 'deb http://http.us.debian.org/debian/ testing non-free contrib main' >> /etc/apt/sources.list
-RUN apt-get update \ 
-	&& apt-get install -y --no-install-recommends \
-                   curl 
+MAINTAINER "Markus Gesmann" markus.gesmann@gmail.com
 
-RUN apt-get update \ 
- 	&& apt-get install -t unstable -y --no-install-recommends \
-                   texlive-xetex \
-                   texlive-fonts-extra
+RUN apt-get update && apt-get install -y software-properties-common
+RUN add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+
+RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/  " >> /etc/apt/sources.list
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+
+RUN apt-get update
+RUN apt-get upgrade -y
+
+RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update \
+ && apt-get install -y \
+	libcurl4-openssl-dev \
+	qpdf \
+	pandoc \
+	make \
+	wget \
+	git \
+	libgdal-dev \
+	libgeos-dev \
+	libproj-dev \
+	liblwgeom-dev \
+	libudunits2-dev \
+	postgis \
+	r-base-dev \
+	r-cran-rstan
+
+RUN apt-get install -y texinfo \
+       texlive-base \
+       texlive-extra-utils \
+       texlive-fonts-extra \
+       texlive-fonts-recommended \
+       texlive-generic-recommended \
+       texlive-latex-base \
+       texlive-latex-extra \
+       texlive-latex-recommended
+
+RUN apt-get install -y pandoc pandoc-citeproc
+
+RUN apt-get install -y libv8-3.14-dev libprotobuf-dev protobuf-compiler libcairo2-dev
+RUN add-apt-repository -y ppa:opencpu/jq
+RUN apt-get update
+RUN apt-get install -y libjq-dev
+
+
+RUN Rscript -e 'install.packages(c("brms", "bayesplot", "ChainLadder", "raw",
+    "data.table", "nlme", "lme4", "deSolve", "latticeExtra", "cowplot",
+    "modelr", "tidybayes", "loo", "bayesplot", "ggmcmc", "doMC", "glmnet",
+    "mcglm", "bookdown"), dependencies = TRUE,  repos = "https://cloud.r-project.org")'
+
+CMD ["/bin/bash"]
