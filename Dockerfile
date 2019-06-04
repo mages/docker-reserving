@@ -48,10 +48,24 @@ RUN add-apt-repository -y ppa:opencpu/jq
 RUN apt-get update
 RUN apt-get install -y libjq-dev
 
+RUN apt-get update \
+        && apt-get install -y --no-install-recommends \
+                 littler \
+ 		 r-base \
+ 		 r-base-dev \
+ 		 r-recommended \
+  	&& ln -s /usr/lib/R/site-library/littler/examples/install.r /usr/local/bin/install.r \
+ 	&& ln -s /usr/lib/R/site-library/littler/examples/install2.r /usr/local/bin/install2.r \
+ 	&& ln -s /usr/lib/R/site-library/littler/examples/installGithub.r /usr/local/bin/installGithub.r \
+ 	&& ln -s /usr/lib/R/site-library/littler/examples/testInstalled.r /usr/local/bin/testInstalled.r \
+ 	&& install.r docopt \
+ 	&& rm -rf /tmp/downloaded_packages/ /tmp/*.rds \
+ 	&& rm -rf /var/lib/apt/lists/*
 
-RUN Rscript -e 'install.packages(c("brms", "bayesplot", "ChainLadder", "raw", \
-    "data.table", "nlme", "lme4", "deSolve", "latticeExtra", "cowplot", \
-    "modelr", "tidybayes", "loo", "bayesplot", "ggmcmc", "doMC", "glmnet", \
-    "mcglm", "bookdown"), dependencies = TRUE,  repos = "https://cloud.r-project.org")'
+RUN install2.r --error --deps TRUE rstan brms bayesplot ChainLadder raw \
+    data.table nlme lme4 deSolve latticeExtra \
+    cowplot modelr tidybayes \
+    loo bayesplot ggmcmc doMC \
+    glmnet mcglm bookdown tinytex 
 
 CMD ["/bin/bash"]
