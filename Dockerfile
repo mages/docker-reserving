@@ -46,9 +46,9 @@ RUN apt-get update
 RUN apt-get install -y libjq-dev
 
 
-RUN Rscript -e 'install.packages(c("brms", "bayesplot", "ChainLadder", "raw",
-    "data.table", "nlme", "lme4", "deSolve", "latticeExtra", "cowplot",
-    "modelr", "tidybayes", "loo", "bayesplot", "ggmcmc", "doMC", "glmnet",
+RUN Rscript -e 'install.packages(c("brms", "bayesplot", "ChainLadder", "raw", \
+    "data.table", "nlme", "lme4", "deSolve", "latticeExtra", "cowplot", \
+    "modelr", "tidybayes", "loo", "bayesplot", "ggmcmc", "doMC", "glmnet", \
     "mcglm", "bookdown"), dependencies = TRUE,  repos = "https://cloud.r-project.org")'
 
 CMD ["/bin/bash"]
