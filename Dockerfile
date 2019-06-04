@@ -2,26 +2,19 @@ FROM ubuntu:18.04
 
 MAINTAINER "Markus Gesmann" markus.gesmann@gmail.com
 
-RUN export DEBIAN_FRONTEND=noninteractive
-
 RUN apt-get update && apt-get install -y software-properties-common
 RUN add-apt-repository ppa:ubuntugis/ubuntugis-unstable
 
-RUN add-apt-repository -y "ppa:marutter/rrutter"
-RUN add-apt-repository -y "ppa:marutter/c2d4u"
+RUN add-apt-repository -y "ppa:marutter/rrutter3.5"
+RUN add-apt-repository -y "ppa:marutter/c2d4u3.5"
 
-# Utilities
-RUN apt-get update && apt-get install -y gnupg ca-certificates pandoc
-RUN apt-get install apt-transport-https ca-certificates
-
-# Add R repository
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
-RUN add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/'
+RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial-cran35/  " >> /etc/apt/sources.list
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
 
 RUN apt-get update
-RUN apt-get upgrade
+RUN apt-get upgrade -y
 
-RUN apt-get -y update \
+RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update \
  && apt-get install -y \
 	libcurl4-openssl-dev \
 	qpdf \
