@@ -1,4 +1,4 @@
-FROM ubuntu:16.04
+FROM ubuntu:bionic
 
 MAINTAINER "Markus Gesmann" markus.gesmann@gmail.com
 
@@ -8,7 +8,7 @@ RUN add-apt-repository ppa:ubuntugis/ubuntugis-unstable
 RUN add-apt-repository -y "ppa:marutter/rrutter"
 RUN add-apt-repository -y "ppa:marutter/c2d4u"
 
-RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial/  " >> /etc/apt/sources.list
+RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu xenial-cran35/  " >> /etc/apt/sources.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
 
 RUN apt-get update
