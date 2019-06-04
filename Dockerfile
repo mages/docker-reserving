@@ -2,17 +2,20 @@ FROM ubuntu:bionic
 
 MAINTAINER "Markus Gesmann" markus.gesmann@gmail.com
 
-RUN apt-get update && apt-get install -y software-properties-common
+RUN apt-get update && apt-get install -y software-properties-common 
+RUN apt-get apt-utils
 RUN add-apt-repository ppa:ubuntugis/ubuntugis-unstable
 
 RUN add-apt-repository -y "ppa:marutter/rrutter"
 RUN add-apt-repository -y "ppa:marutter/c2d4u"
 
-RUN echo "deb http://cran.rstudio.com/bin/linux/ubuntu disco-cran35/  " >> /etc/apt/sources.list
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E084DAB9
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+RUN echo "deb https://cloud.r-project.org/bin/linux/ubuntu bionic-cran35/" >> /etc/apt/sources.list
+
 
 RUN apt-get update
 RUN apt-get upgrade -y
+
 
 RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update \
  && apt-get install -y \
