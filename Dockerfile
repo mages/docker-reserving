@@ -29,8 +29,24 @@ RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update \
 	libudunits2-dev \
 	postgis \
 	r-base-dev \
-	r-cran-rstan
-
+	r-cran-rstan \
+	r-cran-latticeextra \
+	r-cran-assertthat \
+	r-cran-cairo \
+	r-cran-codetools \
+	r-cran-curl \
+	r-cran-data.table \
+	r-cran-dplyr \
+	r-cran-future \
+	r-cran-ggplot2 \
+	r-cran-knitr \
+	r-cran-lme4  \
+	r-cran-nlme \
+	r-cran-rcpp \
+	r-cran-rcppeigen \
+	r-cran-testthat \
+	r-cran-tidyr
+	
 RUN apt-get install -y texinfo \
        texlive-base \
        texlive-extra-utils \
@@ -39,10 +55,10 @@ RUN apt-get install -y texinfo \
        texlive-generic-recommended \
        texlive-latex-base \
        texlive-latex-extra \
-       texlive-latex-recommended
+       texlive-latex-recommended \
+       texlive-xetex
 
 RUN apt-get install -y pandoc pandoc-citeproc
-
 
 RUN apt-get install -y libv8-3.14-dev libprotobuf-dev protobuf-compiler libcairo2-dev
 RUN add-apt-repository -y ppa:opencpu/jq
@@ -56,8 +72,9 @@ RUN mkdir -p /installation/ && \
 
 RUN dpkg -i /installation/pandoc.deb && rm -rf /installation/
 
-
 RUN Rscript -e 'install.packages(c("brms", "bayesplot", "ChainLadder", "raw", \
-    "data.table", "nlme", "lme4", "deSolve", "latticeExtra", "cowplot", \
+    "deSolve", "cowplot", \
     "modelr", "tidybayes", "loo", "bayesplot", "ggmcmc", "doMC", "glmnet", \
     "mcglm", "bookdown"), dependencies = TRUE,  repos = "https://cloud.r-project.org")'
+
+CMD ["/bin/bash"]
