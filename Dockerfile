@@ -33,7 +33,13 @@ RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update  \
 	libudunits2-dev \
 	postgis \
 	r-base-dev \
-	r-cran-rstan
+	r-cran-rstan \
+	r-cran-lme4 \
+	r-cran-nlme \
+	r-cran-tidyverse \
+	r-cran-codetools \
+	r-cran-rcpp 
+	
 
 RUN add-apt-repository ppa:jonathonf/texlive-2018
 
@@ -45,7 +51,8 @@ RUN apt-get install -y texinfo \
        texlive-generic-recommended \
        texlive-latex-base \
        texlive-latex-extra \
-       texlive-latex-recommended
+       texlive-latex-recommended \
+       texlive-xetex
 
 RUN apt-get install -y  pandoc pandoc-citeproc
 
@@ -65,3 +72,4 @@ RUN Rscript -e 'install.packages(c("brms", "bayesplot", "ChainLadder", "raw", \
     "data.table", "nlme", "lme4", "deSolve", "latticeExtra", "cowplot", \
     "modelr", "tidybayes", "loo", "bayesplot", "ggmcmc", "doMC", "glmnet", \
     "mcglm", "bookdown"), dependencies = TRUE,  repos = "https://cloud.r-project.org")'
+
