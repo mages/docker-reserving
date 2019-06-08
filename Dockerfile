@@ -66,7 +66,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	r-cran-kernsmooth \
 	r-cran-mvtnorm \
 	r-cran-shiny \
-	r-cran-htmlwidegts \
+	r-cran-htmlwidgets \
 	r-cran-jsonlite \
 	r-cran-sf \
 	r-cran-sp \
@@ -75,9 +75,17 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	r-cran-zoo
 	
 RUN Rscript -e 'install.packages(c("brms", "ChainLadder", "raw", \
-    "deSolve", "cowplot", \
+    "deSolve", "cowplot", "formatR", "citr", "RefManageR", "bibtex",\
     "modelr", "tidybayes", "loo", "ggmcmc", "doMC", \
     "mcglm", "bookdown"), dependencies = TRUE,  repos = "https://cloud.r-project.org")'
 
 RUN  wget -qO- "https://yihui.name/gh/tinytex/tools/install-unx.sh" | sh
 
+RUN mkdir -p /installation/ && \
+    wget https://github.com/jgm/pandoc/releases/download/2.7.2/pandoc-2.7.2-1-amd64.deb \
+    --no-check-certificate \
+    -O /installation/pandoc.deb
+
+RUN dpkg -i /installation/pandoc.deb && rm -rf /installation/
+
+RUN apt-get install -y pandoc-citeproc
