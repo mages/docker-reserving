@@ -161,4 +161,3 @@ RUN install2.r --error --deps TRUE \
     
 RUN dpkg -i /installation/pandoc.deb && rm -rf /installation/
 
-RUN apt-get install -y pandoc-citeproc
