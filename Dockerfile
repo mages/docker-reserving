@@ -1,26 +1,43 @@
-FROM rocker/r-apt:bionic
+# Docker file with rstan, brms and tinytex
+FROM rocker/r-ubuntu:18.04
 
-MAINTAINER "Markus Gesmann" markus.gesmann@gmail.com
+MAINTAINER Markus Gesmann  <markus.gesmann@gmail.com>
 
-RUN apt-get update
-RUN apt-get -y build-dep libcurl4-gnutls-dev
-RUN apt-get -y install libcurl4-gnutls-dev libmagick++-dev
+RUN apt-get update && apt-get dist-upgrade -y
+
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends apt-utils ed libnlopt-dev \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/
+
+
+# Global site-wide config -- neeeded for building packages
+RUN mkdir -p $HOME/.R/ \
+    && echo "CXXFLAGS=-O3 -mtune=native -march=native -Wno-unused-variable -Wno-unused-function -flto -ffat-lto-objects  -Wno-unused-local-typedefs \n" >> $HOME/.R/Makevars
+
+# Set compiler flag
+RUN echo "CXX14FLAGS=-O3 -march=native -mtune=native" >> $HOME/.R/Makevars
+RUN echo "CXX14FLAGS += -fPIC" >> $HOME/.R/Makevars
+
+# Update R packages
+RUN Rscript -e "update.packages(lib.loc='/usr/local/lib/R/site-library', repos='https://cloud.r-project.org', ask=FALSE)"
 
 RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update  \
  && dpkg --configure -a \
  && apt-get -f install -y \
-  cargo\
-  rustc \
-  libcurl4-gnutls-dev \
-  libxml2-dev \
-  libgit2-dev \
-  libcairo2-dev \
-  libgtk2.0-dev \
-  xvfb \
-  xauth \
-  xfonts-base \
-  libxt-dev \
-  qpdf \
+  	libopenblas-base \
+  	cargo \
+  	rustc \
+  	libcurl4-gnutls-dev \
+  	libxml2-dev \
+  	libgit2-dev \
+  	libcairo2-dev \
+  	libgtk2.0-dev \
+  	xvfb \
+  	xauth \
+  	xfonts-base \
+  	libxt-dev \
+  	qpdf \
 	pandoc \
 	make \
 	wget \
@@ -40,17 +57,18 @@ RUN export DEBIAN_FRONTEND=noninteractive; apt-get -y update  \
 
 ## Update and install rstan
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  r-cran-matrix \
-  r-cran-rstudioapi \
-  r-cran-stanheaders \
+  	r-cran-matrix \
+  	r-cran-rstudioapi \
+	r-cran-stanheaders \
 	r-cran-rstantools \
-  r-cran-rstan \
-  r-cran-loo \
-  r-cran-lme4 \
-	r-cran-nlme \
-	r-cran-codetools \
-	r-cran-rcpp \
-	r-cran-data.table \
+  	r-cran-rstan \
+  	r-cran-rstanarm \
+  	r-cran-loo \
+  	r-cran-lme4 \
+  	r-cran-nlme \
+  	r-cran-codetools \
+  	r-cran-rcpp \
+ 	r-cran-data.table \
 	r-cran-latticeextra \
 	r-cran-tidyverse \
 	r-cran-bayesplot \
@@ -70,16 +88,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	r-cran-jsonlite \
 	r-cran-rcppeigen \
 	r-cran-bh \
-	r-cran-zoo
-	
-RUN Rscript -e 'install.packages(c("brms", "ChainLadder", "raw", \
-    "deSolve", "cowplot", "formatR", "citr", "RefManageR", "bibtex",\
-    "modelr", "tidybayes", "loo", "ggmcmc", "doMC", \
-    "mcglm", "bookdown"), dependencies = TRUE,  repos = "https://cloud.r-project.org")'
-
+	r-cran-zoo \
+	r-cran-brms \
+	r-cran-chainladder \
+	r-cran-desolve \
+  	r-cran-cowplot \
+  	r-cran-formatr \
+  	r-cran-refmanager \
+  	r-cran-bibtex \
+  	r-cran-modelr \
+  	r-cran-loo
+  
 ENV PATH=$PATH:/opt/TinyTeX/bin/x86_64-linux/
 
-## Add LaTeX, rticles and bookdown support
 RUN wget "https://travis-bin.yihui.name/texlive-local.deb" \
   && dpkg -i texlive-local.deb \
   && rm texlive-local.deb \
@@ -109,17 +130,14 @@ RUN wget "https://travis-bin.yihui.name/texlive-local.deb" \
     texinfo \
     ## for git via ssh key
     ssh \
- ## just because
-    less \
-    vim \
- ## parallelization
+    ## parallelization
     libzmq3-dev \
     libopenmpi-dev \
- && apt-get clean \
+  && apt-get clean \
   && rm -rf /var/lib/apt/lists/ \
   ## Use tinytex for LaTeX installation
   && install2.r --error tinytex \
- ## Admin-based install of TinyTeX:
+  ## Admin-based install of TinyTeX:
   && wget -qO- \
     "https://github.com/yihui/tinytex/raw/master/tools/install-unx.sh" | \
     sh -s - --admin --no-path \
@@ -131,20 +149,16 @@ RUN wget "https://travis-bin.yihui.name/texlive-local.deb" \
   && chown -R root:staff /opt/TinyTeX \
   && chown -R root:staff /usr/local/lib/R/site-library \
   && chmod -R g+w /opt/TinyTeX \
-  && chmod -R g+wx /opt/TinyTeX/bin \
-  && echo "PATH=${PATH}" >> /usr/local/lib/R/etc/Renviron \
-  ## Currently (2017-06-06) need devel PKI for ssl issue: https://github.com/s-u/PKI/issues/19
-  && install2.r --error PKI \
-  ## And some nice R packages for publishing-related stuff
-  && install2.r --error --deps TRUE \
-    bookdown rticles rmdshower rJava
-
-
+  && chmod -R g+wx /opt/TinyTeX/bin 
+  
 RUN mkdir -p /installation/ && \
     wget https://github.com/jgm/pandoc/releases/download/2.7.2/pandoc-2.7.2-1-amd64.deb \
     --no-check-certificate \
     -O /installation/pandoc.deb
 
+RUN install2.r --error --deps TRUE \
+    bookdown raw citr tidybayes
+    
 RUN dpkg -i /installation/pandoc.deb && rm -rf /installation/
 
 RUN apt-get install -y pandoc-citeproc
