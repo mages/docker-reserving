@@ -97,6 +97,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   	r-cran-refmanager \
   	r-cran-bibtex \
   	r-cran-modelr \
+	r-cran-kableextra \
   	r-cran-loo
   
 ENV PATH=$PATH:/opt/TinyTeX/bin/x86_64-linux/
