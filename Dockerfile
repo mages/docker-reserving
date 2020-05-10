@@ -1,5 +1,5 @@
 # Docker file with rstan, brms and tinytex
-FROM rocker/r-base
+FROM rocker/r-ubuntu:18.04
 
 MAINTAINER Markus Gesmann  <markus.gesmann@gmail.com>
 
