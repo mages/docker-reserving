@@ -153,7 +153,7 @@ RUN wget "https://travis-bin.yihui.name/texlive-local.deb" \
   && chmod -R g+wx /opt/TinyTeX/bin 
   
 RUN mkdir -p /installation/ && \
-    wget https://github.com/jgm/pandoc/releases/download/2.9.2.1/pandoc-2.9.2.1-1-amd64.deb \
+    wget https://github.com/jgm/pandoc/releases/download/2.7.2/pandoc-2.7.2-1-amd64.deb \
     --no-check-certificate \
     -O /installation/pandoc.deb
 
