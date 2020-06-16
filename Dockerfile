@@ -10,10 +10,6 @@ RUN apt-get update \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/
 
-## Then the actual upgrade: 'r-base' .deb packages
-RUN add-apt-repository --yes ”ppa:edd/r-4.0” 
-RUN apt dist-upgrade
-
 # Global site-wide config -- neeeded for building packages
 RUN mkdir -p $HOME/.R/ \
     && echo "CXXFLAGS=-O3 -mtune=native -march=native -Wno-unused-variable -Wno-unused-function -flto -ffat-lto-objects  -Wno-unused-local-typedefs \n" >> $HOME/.R/Makevars
